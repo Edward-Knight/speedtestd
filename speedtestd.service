@@ -1,0 +1,9 @@
+[Unit]
+Description=Internet speed monitoring
+After=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/speedtestd
+
+[Install]
+WantedBy=multi-user.target

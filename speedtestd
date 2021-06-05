@@ -1,0 +1,30 @@
+#!/bin/sh
+# Internet speed monitoring
+# https://github.com/Edward-Knight/speedtestd
+
+
+cooldown_mins=30
+cooldown_secs=$(( cooldown_mins * 60 ))
+download_log_file=/var/log/speedtestd_download.log
+upload_log_file=/var/log/speedtestd_upload.log
+
+
+log() {
+    # log a line to file ${2} with the current time and result ${1}
+    echo "$(date --iso-8601=seconds) ${1}" >> "${2}"
+}
+
+main() {
+    while true; do
+        if result=$(speedtest --csv); then
+            download=$(echo "${result}" | cut -d , -f 7)
+            upload=$(echo "${result}" | cut -d , -f 8)
+            log "${download}" "${download_log_file}"
+            log "${upload}" "${upload_log_file}"
+        fi
+        sleep "${cooldown_secs}"
+    done
+}
+
+
+main
